@@ -1,0 +1,237 @@
+import React, { useState } from "react";
+import { Box, TextField, Button, Typography, Alert, Paper, CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+// Theme Constants
+const NEON_CYAN = "#4CC9F0";
+
+function AddSpeaker() {
+  const [formData, setFormData] = useState({
+    name: "",
+    image: null,
+  });
+
+  const [alert, setAlert] = useState({ success: true, message: "" });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      image: e.target.files[0],
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { name, image } = formData;
+
+    if (!name || !image) {
+      setAlert({ success: false, message: "Please fill all fields" });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const data = new FormData();
+      data.append("name", name);
+      data.append("image", image);
+
+      const res = await axios.post("http://localhost:3001/speaker", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (res.data.success) {
+        setAlert({ success: true, message: "Speaker added successfully!" });
+        setFormData({ name: "", image: null });
+
+        setTimeout(() => {
+          navigate("/showSpeak");
+        }, 1500);
+      } else {
+        setAlert({ success: false, message: res.data.message });
+      }
+    } catch (error) {
+      setAlert({
+        success: false,
+        message: error.response?.data?.message || "Something went wrong!",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "radial-gradient(circle at top right, #1B263B, #0D1B2A)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 2,
+      }}
+    >
+      <Paper
+        elevation={24}
+        sx={{
+          width: "100%",
+          maxWidth: 450,
+          p: 5,
+          borderRadius: "30px",
+          background: "rgba(13, 27, 42, 0.9)",
+          backdropFilter: "blur(15px)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
+        }}
+      >
+        {/* Dashboard Heading */}
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 900,
+            fontFamily: "'Poppins', sans-serif",
+            textAlign: "center",
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            mb: 4,
+            background: "linear-gradient(90deg, #4CC9F0, #4895EF, #F72585)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            filter: "drop-shadow(0px 4px 8px rgba(76, 201, 240, 0.3))",
+          }}
+        >
+          Add Speaker
+        </Typography>
+
+        {alert.message && (
+          <Alert
+            severity={alert.success ? "success" : "error"}
+            sx={{ mb: 3, borderRadius: "12px", fontWeight: "bold" }}
+          >
+            {alert.message}
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Speaker Name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            margin="normal"
+            required
+            variant="filled"
+            sx={{
+              mb: 3,
+              "& .MuiFilledInput-root": {
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                color: "#fff",
+                borderRadius: "12px",
+                "&:before, &:after": { display: "none" },
+                border: "1px solid rgba(76, 201, 240, 0.2)",
+                transition: "0.3s",
+                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.08)" },
+                "&.Mui-focused": {
+                  border: `2px solid ${NEON_CYAN}`,
+                  boxShadow: `0 0 15px ${NEON_CYAN}44`,
+                },
+              },
+              "& .MuiInputLabel-root": { color: "#94A3B8" },
+              "& .MuiInputLabel-root.Mui-focused": { color: NEON_CYAN },
+            }}
+          />
+
+          {/* Image Upload Button */}
+          <Button
+            variant="outlined"
+            component="label"
+            fullWidth
+            sx={{
+              py: 1.5,
+              borderRadius: "12px",
+              color: "#fff",
+              borderColor: "rgba(255, 255, 255, 0.3)",
+              borderStyle: "dashed",
+              textTransform: "none",
+              background: "rgba(255, 255, 255, 0.02)",
+              "&:hover": {
+                borderColor: NEON_CYAN,
+                background: "rgba(76, 201, 240, 0.05)",
+              },
+            }}
+          >
+            {formData.image ? "Change Speaker Image" : "📁 Upload Speaker Image"}
+            <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+          </Button>
+
+          {formData.image && (
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                mt: 1,
+                textAlign: "center",
+                color: NEON_CYAN,
+                fontWeight: "bold",
+              }}
+            >
+              Selected: {formData.image.name}
+            </Typography>
+          )}
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            disabled={loading}
+            sx={{
+              py: 2,
+              fontSize: 18,
+              fontWeight: 800,
+              borderRadius: "18px",
+              textTransform: "none",
+              background: "linear-gradient(90deg, #4895EF, #4CC9F0)",
+              boxShadow: "0 12px 30px rgba(76, 201, 240, 0.3)",
+              transition: "all 0.4s ease",
+              mt: 4,
+              "&:hover": {
+                transform: "translateY(-4px)",
+                boxShadow: "0 18px 45px rgba(76, 201, 240, 0.5)",
+                background: "linear-gradient(90deg, #4CC9F0, #4895EF)",
+              },
+              "&:disabled": {
+                background: "rgba(255, 255, 255, 0.1)",
+                color: "rgba(255, 255, 255, 0.3)",
+              },
+            }}
+          >
+            {loading ? (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CircularProgress size={20} sx={{ color: "#fff" }} />
+                <Typography variant="body1" fontWeight={800}>
+                  Adding...
+                </Typography>
+              </Box>
+            ) : (
+              "Add Speaker"
+            )}
+          </Button>
+        </form>
+      </Paper>
+    </Box>
+  );
+}
+
+export default AddSpeaker;

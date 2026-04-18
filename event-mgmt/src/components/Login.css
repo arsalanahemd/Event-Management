@@ -1,0 +1,12 @@
+/* Login.css */
+
+/* Login Card */
+.login-card {
+  border-radius: 16px;       /* Card radius */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  padding: 32px;             /* Padding inside card */
+  background-color: #fff;
+  width: 100%;               /* Full width inside grid */
+  max-width: 700px;          /* Maximum width for large screens */
+  margin: 0 auto;            /* Center horizontally */
+}
