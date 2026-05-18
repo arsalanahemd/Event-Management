@@ -80,7 +80,7 @@ function Login() {
         setTimeout(() => {
           const encodedName = encodeURIComponent(user.name);
           const encodedId = encodeURIComponent(user._id);
-          window.location.href = `http://localhost:3000/carpatin-dashboard-free?name=${encodedName}&id=${encodedId}`;
+          window.location.href = `http://localhost:3000/?name=${encodedName}&id=${encodedId}`;
         }, 800);
       } else {
         localStorage.setItem("user", JSON.stringify(user));
