@@ -2,7 +2,7 @@ import './App.css'
 import {BrowserRouter as Router,Routes,Route} from 'react-router-dom'
 import Nav from './components/Nav'
 import Home from './pages/Home'
-import Footer from './components/Footer'
+// import Footer from './components/Footer'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Event from './pages/Event'
@@ -12,6 +12,9 @@ import ChangePass from './components/ChangePass'
 import ShowMessages from './pages/Showmessages'
 import YourRegistration from './pages/YourRegistration'
 import AddCompany from './pages/AddCompany'
+// import ShowCompany from './pages/ShowCompany'
+// import ShowCompany from './components/ShowCompany'
+// import ShowCompany from './pages/ShowCompany'
 import ShowCompany from './pages/ShowCompany'
 import ParticipateExpo from './pages/ParticipateExpo'
 import Yourparticipation from './pages/YourParticipations'
@@ -39,7 +42,7 @@ function App() {
         <Route path='/participateExpo/:id' element={<ParticipateExpo/>}/>
         <Route path='/Yourparticipation' element={<Yourparticipation/>}/>
       </Routes>
-      <Footer/>
+      {/* <Footer/> */}
     </Router>
     </>
   )
